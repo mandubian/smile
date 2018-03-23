@@ -1257,6 +1257,12 @@ public class QuantileRegressionTree implements QuantileRegression<double[]>, Ser
 
             node.split(nextSplits); // Split the parent node into two children nodes
         }
+        // pops remaining nodes & consider they are leaves and generate value distribution
+        SparseBinaryTrainNode trainNode = nextSplits.poll();
+        while(trainNode != null) {
+            trainNode.node.buildPredictionDistribution(trainNode.samples, null, trainNode.y);
+            trainNode = nextSplits.poll();
+        }
         
         if (output != null) {
             trainRoot.calculateOutput(output);
